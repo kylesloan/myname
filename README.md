@@ -50,3 +50,15 @@ Configure the ec2 instance:
 ##### Check S3 for the image
 
 Because docker registry is setup with the S3 information, the docker artifact should now exist in the S3 bucket.  Find this by logging into the AWS console (browser) and select S3 and navigate to the given bucket.
+
+
+##### Run the myname container
+
+* `ssh -i ~/.ssh/my.pem ec2-user@$IP` -- replace with proper IP and path to PEM
+* `sudo docker images`
+* `sudo docker run localhost:5000/myname`
+
+##### Run the myname container with a volume replacement of the name.txt file
+
+* `echo "Leeroy:Jenkins" > mynewname.txt`
+* `sudo docker run -v $(pwd)/mynewname.txt:/usr/local/name.txt localhost:5000/myname`
