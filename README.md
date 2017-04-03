@@ -62,3 +62,5 @@ Because docker registry is setup with the S3 information, the docker artifact sh
 
 * `echo "Leeroy:Jenkins" > mynewname.txt`
 * `sudo docker run -v $(pwd)/mynewname.txt:/usr/local/name.txt localhost:5000/myname`
+
+##### Don't forget to power down the ec2 instance and delete the s3 content to save $$
