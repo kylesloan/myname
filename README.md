@@ -64,3 +64,6 @@ Because docker registry is setup with the S3 information, the docker artifact sh
 * `sudo docker run -v $(pwd)/mynewname.txt:/usr/local/name.txt localhost:5000/myname`
 
 #### Don't forget to power down the ec2 instance and delete the s3 content to save $$
+
+
+If you wanted, you can now use docker registry and pull the image onto other servers, just run the docker registry image with the same S3 login info.
