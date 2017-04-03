@@ -1,0 +1,19 @@
+---
+# group_vars/all.yml
+
+# instance_user is the default user and shouldn't need be change if you use Amazones EC2 linux AMI.
+# instance_ip is the public IP of the instance.
+# pem file is given to you when first launching an EC2 instance.
+# s3 access requires you to go to IAM and create a user with s3 access.
+# Create the bucket in s3 manually.
+# If you are going to store this in the repo, checkout ansible vault.
+
+aws:
+ instance_ip: "1.2.3.4"
+ instance_user: "ec2-user"
+ instance_ssh_key: "~/path/to/aws.pem"
+ s3:
+   key: "AAAAAAAAAAAAAAAAAAAA"
+   secret: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+   region: "us-east-1"
+   bucket: "mybucket"

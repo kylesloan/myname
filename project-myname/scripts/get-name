@@ -1,0 +1,3 @@
+#!/bin/sh
+/usr/local/bin/get-first-name
+/usr/local/bin/get-last-name

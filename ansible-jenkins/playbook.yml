@@ -1,0 +1,74 @@
+---
+# playbook.yml
+# AMI used 'Amazon Linux AMI 2016.09.1 (PV) - ami-8a72cdea', aka amazon's version of centos.
+# Be sure to open up 8080 in aws security groups to your current IP.
+# Please note this is not the actual project, but simply setting up jenkins in docker to build the project.
+# Have docker jenkins build docker containers for code? https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/
+# How to easily setup jenkins jobs from an existing job - https://wiki.jenkins-ci.org/display/JENKINS/Administering+Jenkins#AdministeringJenkins-Moving/copying/renamingjobs
+# How to push docker images to s3 - https://docs.docker.com/registry/
+- hosts: "jenkins"
+  tasks:
+    - name: "install needed yum packages"
+      become: true
+      yum:
+        name: "docker"
+    - name: "install needed pip packages"
+      become: true
+      pip:
+        name: "docker-py"
+    - name: "start docker"
+      become: true
+      service:
+        name: "docker"
+        state: "started"
+    - name: "create docker dirs for jenkins, uid 1000 is jenkins inside the container, uid 500 is default ami user"
+      become: true
+      file:
+        state: directory
+        dest: "{{ item.dir }}"
+        owner: "{{ item.uid }}"
+      with_items:
+        - { dir: "docker_volumes/jenkins/data", uid: 1000 }
+        - { dir: "docker_volumes/jenkins/plugins", uid: 1000 }
+        - { dir: "docker_files/jenkins/", uid: 500 }
+    - name: "upload docker file to build jenkins with"
+      copy:
+        dest: "docker_files/jenkins/Dockerfile"
+        src: "templates/docker_files/jenkins/Dockerfile"
+    - name: "upload job config to not have to manually create"
+      become: true
+      copy:
+        dest: "docker_files/jenkins/myname-job-config.xml"
+        src: "templates/docker_files/jenkins/myname-job-config.xml"
+        owner: "1000"
+        force: false
+    - name: "build the docker image of jenkins from the mightly alpine"
+      become: true
+      docker_image:
+        name: "myjenkins"
+        path: "docker_files/jenkins"
+    - name: "start up our docker instance for jenkins, volumes require full path"
+      become: true
+      docker_container:
+        name: "myjenkins"
+        image: "myjenkins"
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        volumes:
+          - "/home/ec2-user/docker_volumes/jenkins/data:/var/jenkins_home:rw"
+          - "/home/ec2-user/docker_files/jenkins/myname-job-config.xml:/var/jenkins_home/jobs/myname/config.xml:rw"
+          - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    - name: "start up our docker registry to store images on s3 docs.docker.com/registry"
+      become: true
+      docker_container:
+        name: "registry"
+        image: "registry"
+        ports:
+          - "5000:5000"
+        env:
+          REGISTRY_STORAGE: "s3"
+          REGISTRY_STORAGE_S3_ACCESSKEY: "{{ aws.s3.key }}"
+          REGISTRY_STORAGE_S3_SECRETKEY: "{{ aws.s3.secret }}"
+          REGISTRY_STORAGE_S3_REGION: "{{ aws.s3.region }}"
+          REGISTRY_STORAGE_S3_BUCKET: "{{ aws.s3.bucket }}"

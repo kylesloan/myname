@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+# pass a file arugment in, assume a text file with "firstname:lastname" and return the lastname part
+
+import sys, os.path
+
+MYFILE="/usr/local/name.txt"
+
+if not os.path.isfile(MYFILE):
+  print MYFILE + " not found, exiting with error"
+  sys.exit(1)
+
+CONTENTS = open(MYFILE).read()
+
+CONTENTS_LIST = CONTENTS.split(':', 1)
+
+print "LAST NAME == " + CONTENTS_LIST[1]

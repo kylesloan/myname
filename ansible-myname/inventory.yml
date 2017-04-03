@@ -1,0 +1,3 @@
+# inventory.yml
+[myname]
+myname ansible_host="localhost"

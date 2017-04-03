@@ -1,0 +1,12 @@
+#!/bin/sh
+# no bash on alpine so use sh
+# extract the first name from a text file given the file is in format "firstname:lastname"
+set -eu
+MYFILE=/usr/local/name.txt
+
+if [ ! -e $MYFILE ]; then
+  echo "$MYFILE not found"
+  exit 1
+fi
+
+awk -F ':' '{ print "FIRST NAME == " $1 }' $MYFILE
