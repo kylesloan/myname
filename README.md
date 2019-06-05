@@ -6,6 +6,7 @@ This project shows off
 * ansible automation of a jenkins server
 * importing settings for a jenkins job that will use ansible to build a docker image artifact that pushes to AWS S3
 * the docker image will take a text file (/usr/local/name.txt with content of `MyFirstName:MyLastName`) and use a shell script to grab the first name, and a python script to grab the last, and echo the results.
+* Based on requirements from the Instructions.md file
 
 ### Whats Inside
 This project has directories of items that would normally be seperate repositories, but are put into one for ease of learning and following.
